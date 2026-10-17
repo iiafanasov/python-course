@@ -8,6 +8,7 @@ TITLE = "Проверка Pygame Zero"
 
 
 def draw():
+    # Pygame Zero вызывает draw() сам, чтобы нарисовать окно
     screen.fill((30, 30, 60))
     screen.draw.text(
         "Pygame Zero работает!\nЗакрой окно",

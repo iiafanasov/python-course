@@ -7,3 +7,9 @@ __pycache__/
 .idea/shelf/
 .DS_Store
 Thumbs.db
+
+# Сохранения и рекорды игр: у каждого игрока свои, в историю не попадают.
+# Имена файлов: save.json, game_save.json, records.json
+save*.json
+*_save.json
+records*.json

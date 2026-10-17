@@ -1,4 +1,4 @@
-"""Проверка окружения: версия Python, виртуальное окружение, pgzero и pytest.
+"""Проверка окружения: Python, виртуальное окружение, pgzero, pytest и имена файлов.
 
 Запуск: python tools/check_setup.py
 Код возврата: 0 — всё в порядке, 1 — есть проблемы.
@@ -7,10 +7,39 @@
 import importlib
 import importlib.metadata
 import os
+import re
 import sys
+from pathlib import Path
 
 MIN_VERSION = (3, 13)
 PACKAGES = ("pgzero", "pytest")
+REPO_ROOT = Path(__file__).resolve().parent.parent
+# Имена, которые нельзя давать своим .py: такой файл заслонит настоящий модуль и сломает импорт
+TAKEN_MODULE_NAMES = set(sys.stdlib_module_names) | {"pgzero", "pgzrun", "pygame", "pytest", "test"}
+SAFE_NAME = re.compile(r"[A-Za-z0-9_.\-]+")
+SKIP_DIRS = {".git", ".venv", "venv", ".idea", "__pycache__", ".pytest_cache"}
+
+
+def check_file_names(root: Path) -> list[str]:
+    """Найти имена с пробелами/кириллицей и .py-файлы, совпадающие с модулями Python."""
+    problems = []
+    for path in sorted(root.rglob("*")):
+        relative = path.relative_to(root)
+        if any(part in SKIP_DIRS for part in relative.parts):
+            continue
+        if path.is_file() and path.suffix == ".md":
+            continue
+        if not SAFE_NAME.fullmatch(path.name):
+            problems.append(
+                f"{relative.as_posix()}: в имени пробелы, русские буквы или значки — "
+                "переименуй латиницей через _"
+            )
+        elif path.suffix == ".py" and path.stem in TAKEN_MODULE_NAMES:
+            problems.append(
+                f"{relative.as_posix()}: так называется модуль Python — переименуй, "
+                f"например, в my_{path.stem}.py"
+            )
+    return problems
 
 
 def main() -> int:
@@ -48,6 +77,13 @@ def main() -> int:
             missing.append(package)
     if missing:
         problems.append(f"Не установлено: {', '.join(missing)}. Выполни: pip install -r requirements.txt")
+
+    name_problems = check_file_names(REPO_ROOT)
+    if name_problems:
+        print(f"[!!] Имена файлов: {len(name_problems)} проблем(ы)")
+        problems.extend(name_problems)
+    else:
+        print("[OK] Имена файлов и папок")
 
     print()
     if not problems:
