@@ -89,7 +89,7 @@ python tools/sync_to_student.py --week NN --student-repo <путь к python-cou
 
 ### Git
 
-Git ведёт только учитель. Ученик Git не использует и не имеет аккаунта GitHub (ToS GitHub: только 13+). Для возврата к старой версии файла ученик пользуется Local History в PyCharm — «машина времени», показываем на неделе 5: правый клик по файлу → Local History → Show History → выбрать время → Revert.
+Git ведёт только учитель. Ученик Git не использует и не имеет аккаунта GitHub (ToS GitHub: только 13+). Для возврата к старой версии файла ученик пользуется Local History в PyCharm — «машина времени», показываем на неделе 6: правый клик по файлу → Local History → Show History → выбрать время → Revert.
 
 - Одна ветка `main` на весь курс.
 - Коммиты делает только учитель:
